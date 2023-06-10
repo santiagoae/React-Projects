@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Square } from "./Components/Square"
 import { TURNS } from "./constants"
 import { WinnerModal } from "./Components/WinnerModal"
@@ -16,8 +16,13 @@ function App() {
     const turnFromStorage = window.localStorage.getItem('turn')
     return turnFromStorage ?? TURNS.X //si hay algo en fromstorage devuelve eso, si es null o undefined devuelve turns.x
   })
-  const [winner, setWinner] = useState(null) //null no hay ganador, false empate  
-
+  const [winner, setWinner] = useState(null) //null no hay ganador, false empate
+  
+  useEffect(() => {
+    console.log('useEffect');
+  }, [winner])
+// el valor que este en el corchete es una dependencia y cuando la variable cambia, 
+// vuelve y se renderiza el useEffect. Pueden haber varias dependencias [winner, turn]
 
   const updateBoard = (index) => {
     //actualizar el tablero
@@ -30,7 +35,7 @@ function App() {
     setTurn(newTurn)
     //guardar aqui partida
     window.localStorage.setItem('board', JSON.stringify(newBoard))
-    window.localStorage.setItem('turno', turn)
+    window.localStorage.setItem('turn', newTurn)
     //revisar si hay un ganador
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
@@ -46,6 +51,8 @@ function App() {
     setBoard(Array(9).fill(null))
     setTurn(TURNS.X)
     setWinner(null)
+    window.localStorage.removeItem('board')
+    window.localStorage.removeItem('turn')
   }
 
   return (
